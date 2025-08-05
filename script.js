@@ -1,23 +1,32 @@
 const ronSwansonUrl = 'https://ron-swanson-quotes.herokuapp.com/v2/quotes';
+const giphyUrl = "https://api.giphy.com/v1/gifs/random?api_key=jcu4NXTXLGt7WZEjBCDGHMvCQ6WHQosL";
 
-async function getRandomGif(){
-    const url = "https://api.giphy.com/v1/gifs/random?api_key=jcu4NXTXLGt7WZEjBCDGHMvCQ6WHQosL";
+const regenerateButton = document.querySelector("#regenerate-button");
 
-    const response = await fetch(url);
+async function getRandomGif() {
+    const response = await fetch(giphyUrl);
     const data = await response.json();
+    const images = data.data.images;
 
-    let newGif = document.createElement("img");
-    newGif.src = data.data.images.original.url;
-
-    let body = document.querySelector("body");
-    body.appendChild(newGif);
+    let newGif = document.querySelector("img");
+    if (images) {
+        newGif.src = images.original.url;
+    }
 }
 
-async function getRandomQuote() {
+async function setRandomQuote() {
     const response = await fetch(ronSwansonUrl);
-    const data = await response.json();
-    return data[0];
+    const data = response.json();
+    let h3 = document.querySelector("h3#caption");
+    data.then((quote) => {
+        h3.innerText = quote[0];
+    });
 }
 
-let randomQuote = getRandomQuote();
+regenerateButton.onclick = function() {
+    getRandomGif();
+    setRandomQuote();
+}
 
+getRandomGif();
+setRandomQuote();
